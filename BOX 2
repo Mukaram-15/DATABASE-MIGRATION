@@ -1,0 +1,46 @@
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    email VARCHAR(100),
+    created_at DATETIME,
+    updated_at DATETIME
+);
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+-- Migration script for PostgreSQL
+
+-- Step 1: Create tables
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+-- Add additional tables, indexes, constraints as needed
+
+-- Step 2: Transfer indexes (if needed)
+CREATE INDEX idx_users_email ON users(email);
+
+-- Step 3: Add foreign key constraints (if needed)
+ALTER TABLE orders
+  ADD CONSTRAINT fk_users
+  FOREIGN KEY (user_id) REFERENCES users(id);
+mysqldump -u root -p --tab=/path/to/output my_database users
+COPY users(id, name, email, created_at, updated_at)
+FROM '/path/to/output/users.txt'
+DELIMITER ','
+CSV HEADER;
+-- MySQL Example: Export to a SQL dump file (MySQL to PostgreSQL)
+mysqldump -u username -p --opt --compatible=postgresql dbname > dbname.sql
+
+-- Then in PostgreSQL:
+psql -U username -d dbname -f dbname.sql
+SELECT COUNT(*) FROM users;
+SELECT * FROM users WHERE email IS NULL;  -- Verify non-null constraints
