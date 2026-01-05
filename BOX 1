@@ -1,0 +1,16 @@
+mysqldump -u username -p database_name > backup.sql
+sudo apt-get install pgloader
+# Or install using Homebrew on macOS:
+brew install pgloader
+mysqldump -u username -p --no-data database_name > schema.sql
+psql -U postgres_user -d new_database_name -f schema.sql
+mysqldump -u username -p --no-create-info --tab=/path/to/output/directory database_name
+SELECT * FROM table_name
+INTO OUTFILE '/tmp/table_name.csv'
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n';
+pgloader mysql://username:password@mysql_host/database_name postgresql://username:password@postgresql_host/database_name
+COPY table_name FROM '/path/to/table_name.csv' DELIMITER ',' CSV HEADER;
+SELECT COUNT(*) FROM table_name; -- Run this on both MySQL and PostgreSQL
+VACUUM FULL;
