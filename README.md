@@ -1,4 +1,17 @@
 # DATABASE-MIGRATION
+
+COMPANY*: CODTECH IT SOLUTIONS
+
+*NAME*: MOHAMMED MUKARAM ALI 
+
+*INTERN ID*: E8EDB396AAFEF80D
+
+*DOMAIN*: SQL 
+
+*DURATION*: 4 WEEKS
+
+*MENTOR*: NEELA SANTOSH
+
 *OUTPUT*:
 
 <img width="596" height="333" alt="Image" src="https://github.com/user-attachments/assets/47060532-2446-4230-82cb-1fd25a3e554e" />
