@@ -1,16 +1,85 @@
-mysqldump -u username -p database_name > backup.sql
-sudo apt-get install pgloader
-# Or install using Homebrew on macOS:
-brew install pgloader
-mysqldump -u username -p --no-data database_name > schema.sql
-psql -U postgres_user -d new_database_name -f schema.sql
-mysqldump -u username -p --no-create-info --tab=/path/to/output/directory database_name
-SELECT * FROM table_name
-INTO OUTFILE '/tmp/table_name.csv'
+/* =========================================================
+   DATABASE MIGRATION: MySQL TO PostgreSQL
+   ========================================================= */
+
+
+/* =========================================================
+   PART A: MYSQL (SOURCE DATABASE)
+   ========================================================= */
+
+-- 1. Create and use source database
+CREATE DATABASE IF NOT EXISTS source_db;
+USE source_db;
+
+-- 2. Create table
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(50),
+    email VARCHAR(100)
+);
+
+-- 3. Insert data
+INSERT INTO customers VALUES
+(1, 'Alice', 'alice@gmail.com'),
+(2, 'Bob', 'bob@gmail.com'),
+(3, 'Charlie', 'charlie@gmail.com');
+
+-- 4. Export data to CSV
+SELECT
+    customer_id,
+    customer_name,
+    email
+FROM customers
+INTO OUTFILE '/tmp/customers_data.csv'
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
 LINES TERMINATED BY '\n';
-pgloader mysql://username:password@mysql_host/database_name postgresql://username:password@postgresql_host/database_name
-COPY table_name FROM '/path/to/table_name.csv' DELIMITER ',' CSV HEADER;
-SELECT COUNT(*) FROM table_name; -- Run this on both MySQL and PostgreSQL
-VACUUM FULL;
+
+-- 5. Data count check (MySQL)
+SELECT COUNT(*) AS mysql_count FROM customers;
+
+
+/* =========================================================
+   PART B: POSTGRESQL (TARGET DATABASE)
+   ========================================================= */
+
+-- 6. Create target database
+CREATE DATABASE target_db;
+
+-- 7. Connect to target database
+\c target_db
+
+-- 8. Create table
+CREATE TABLE customers (
+    customer_id INT PRIMARY KEY,
+    customer_name VARCHAR(50),
+    email VARCHAR(100)
+);
+
+-- 9. Import data from CSV
+BEGIN;
+
+COPY customers(customer_id, customer_name, email)
+FROM '/tmp/customers_data.csv'
+DELIMITER ','
+CSV;
+
+COMMIT;
+
+-- 10. Data count check (PostgreSQL)
+SELECT COUNT(*) AS postgres_count FROM customers;
+
+-- 11. Data verification
+SELECT * FROM customers ORDER BY customer_id;
+
+
+/* =========================================================
+   DATA INTEGRITY CHECK (INTENTIONAL FAILURE)
+   ========================================================= */
+
+-- This query MUST FAIL to prove PRIMARY KEY integrity
+INSERT INTO customers VALUES (1, 'Test User', 'test@gmail.com');
+
+/* =========================================================
+   END OF DATABASE MIGRATION REPORT
+   ========================================================= */
